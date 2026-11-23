@@ -43,5 +43,5 @@ export function subscribePrefs(cb: () => void) {
 }
 
 export function usePrefs() {
-  return useSyncExternalStore(subscribePrefs, getPrefs);
+  return useSyncExternalStore(subscribePrefs, getPrefs, getPrefs);
 }

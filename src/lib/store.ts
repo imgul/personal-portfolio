@@ -44,6 +44,7 @@ export function useActive() {
       aListeners.add(cb);
       return () => aListeners.delete(cb);
     },
+    () => active,
     () => active
   );
 }

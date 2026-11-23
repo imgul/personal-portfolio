@@ -1,3 +1,5 @@
+"use client";
+
 import { Component, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import gsap from "gsap";
@@ -25,6 +27,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 /** Crawler / automation detection — search bots and AI fetchers skip the entry gate. */
 function isCrawler(): boolean {
+  if (typeof navigator === "undefined") return false;
   const ua = navigator.userAgent || "";
   return (
     /googlebot|google-web-fetch|bingbot|facebookexternalhit|twitterbot|applebot|perplexitybot|aibot|chatgpt|claude|cohere|duckduckbot|slurp|baiduspider|robot/i.test(
@@ -72,6 +75,7 @@ export default function App() {
 
   /* crawler detection + deep-link hash (#about, #contact, …) */
   const hashIdx = useMemo(() => {
+    if (typeof window === "undefined") return -1;
     const id = window.location.hash.replace(/^#/, "");
     return SECTIONS.findIndex((s) => s.id === id);
   }, []);
