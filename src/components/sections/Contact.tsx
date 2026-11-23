@@ -153,7 +153,7 @@ export default function Contact() {
 
   return (
     <div data-section="contact">
-      <section className="relative flex min-h-screen flex-col justify-between px-5 pb-8 pt-28 sm:px-10 md:px-16 lg:pl-24">
+      <section className="relative flex min-h-screen min-h-[100svh] flex-col justify-between px-5 pb-8 pt-28 sm:px-10 md:px-16 lg:pl-24">
         <div>
           <Eyebrow n="08" label="Contact" />
           <Split
@@ -207,7 +207,7 @@ export default function Contact() {
           </div>
         </div>
 
-        <footer className="flex flex-col gap-3 border-t border-white/10 pt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-white/40 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="flex flex-col gap-3 border-t border-white/10 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] font-mono text-[11px] uppercase tracking-[0.2em] text-white/40 sm:flex-row sm:items-center sm:justify-between">
           <span>© 2026 Muhammad Gulzaib</span>
           <span>
             {profile.location} · <Clock /> PKT

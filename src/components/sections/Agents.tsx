@@ -155,12 +155,28 @@ export default function Agents() {
                   strokeWidth="1.5"
                   style={{ transition: "all .4s cubic-bezier(.2,.9,.2,1)" }}
                 />
-                <text x={p.x} y={p.y + 4} textAnchor="middle" fill={active === i ? "#c6ff3d" : "#eae9f2"} fontSize="9.5" fontFamily="JetBrains Mono" letterSpacing="1">
+                <text x={p.x} y={p.y + 4} textAnchor="middle" fill={active === i ? "#c6ff3d" : "#eae9f2"} fontSize="9.5" fontFamily="JetBrains Mono" letterSpacing="1" className="hidden lg:block">
                   {agents[i].name.toUpperCase().slice(0, 9)}
                 </text>
               </g>
             ))}
           </svg>
+          {/* HTML labels on small screens — SVG text would be illegible on phones */}
+          <div className="absolute inset-0 lg:hidden" aria-hidden="true">
+            {pts.map((p, i) => (
+              <span
+                key={agents[i].name}
+                className="agent-overlay-label absolute -translate-x-1/2 -translate-y-1/2 font-mono text-[9px] font-bold uppercase tracking-widest sm:text-[10px]"
+                style={{
+                  left: `${(p.x / 600) * 100}%`,
+                  top: `${(p.y / 600) * 100}%`,
+                  color: active === i ? "#c6ff3d" : "rgba(234,233,242,0.75)",
+                }}
+              >
+                {agents[i].name}
+              </span>
+            ))}
+          </div>
           <p className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.25em] text-white/35">Hover or tap an agent</p>
         </div>
       </div>
