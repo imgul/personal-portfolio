@@ -75,7 +75,9 @@ export default function App() {
     const id = window.location.hash.replace(/^#/, "");
     return SECTIONS.findIndex((s) => s.id === id);
   }, []);
-  const shouldAutoEnter = useMemo(() => isCrawler() || hashIdx >= 0, [hashIdx]);
+  // Only crawlers skip the gate. Deep-link hashes keep the gate so the tap
+  // provides the user gesture iOS/Safari requires to unlock audio.
+  const shouldAutoEnter = useMemo(() => isCrawler(), []);
 
   /* smooth scroll + per-frame scroll/section tracking */
   useEffect(() => {
@@ -150,7 +152,7 @@ export default function App() {
     };
   }, [hashIdx]);
 
-  /* auto-enter for crawlers and deep links, then jump to the requested section */
+  /* auto-enter for crawlers only — they have no audio to unlock */
   useEffect(() => {
     if (!shouldAutoEnter) return;
     const id = setTimeout(() => {
@@ -158,15 +160,25 @@ export default function App() {
       setEntered(true);
       store.lenis?.start();
       setTimeout(() => ScrollTrigger.refresh(), 200);
-      if (hashIdx > 0) {
-        setTimeout(() => {
-          const el = document.querySelectorAll<HTMLElement>("[data-section]")[hashIdx];
-          if (el && store.lenis) store.lenis.scrollTo(el, { duration: 1.2 });
-        }, 400);
-      }
-    }, hashIdx > 0 ? 300 : 0);
+    }, 0);
     return () => clearTimeout(id);
-  }, [shouldAutoEnter, hashIdx]);
+  }, [shouldAutoEnter]);
+
+  /* safety net: unlock audio on the first real user gesture, whatever path
+     the visitor took (iOS/Safari will not start an AudioContext without one) */
+  useEffect(() => {
+    const unlock = () => {
+      if (!audio.ready) void audio.unlock();
+    };
+    window.addEventListener("pointerdown", unlock);
+    window.addEventListener("keydown", unlock);
+    window.addEventListener("touchstart", unlock, { passive: true });
+    return () => {
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+      window.removeEventListener("touchstart", unlock);
+    };
+  }, []);
 
   /* section change feedback: whoosh + tick + haptic + chime */
   useEffect(() => {
@@ -237,6 +249,13 @@ export default function App() {
     setTimeout(() => ScrollTrigger.refresh(), 200);
     // move focus into the document for keyboard / AT users
     requestAnimationFrame(() => mainRef.current?.focus());
+    // deep-link: jump to the requested section once the gate is gone
+    if (hashIdx > 0) {
+      setTimeout(() => {
+        const el = document.querySelectorAll<HTMLElement>("[data-section]")[hashIdx];
+        if (el && store.lenis) store.lenis.scrollTo(el, { duration: 1.2 });
+      }, 500);
+    }
   };
 
   const skipToContent = (e: React.MouseEvent) => {
