@@ -1,10 +1,18 @@
-# Muhammad Gulzaib — Portfolio
+# Muhammad Gulzaib — Portfolio & Blog
 
 > Muhammad Gulzaib is a Senior Full Stack Engineer, AI systems builder and SaaS founder based in Islamabad, Pakistan. He builds SaaS products, AI agents, startup MVPs, ERP systems and RAG pipelines with Laravel, React and Python. He is the Founder & CEO of SynergyFlow Labs and is currently seeking remote or relocation opportunities in UAE / KSA.
 
 ## The site
 
-An interactive, motion-animated portfolio built with React, Three.js, GSAP and Lenis, featuring generative audio and haptics. Sections: Intro, About, Ventures & products, Agentic AI, Experience, Stack, Education & certifications, Beyond the keyboard, Contact.
+An interactive, motion-animated portfolio built with React, Three.js, GSAP and Lenis, featuring generative audio and haptics, plus a static, SEO-optimized blog with long-form engineering and AI-research writing.
+
+## Blog (writing)
+
+- [Designing Agentic Systems That Actually Ship](https://gulzaib.vercel.app/blog/agentic-systems-that-ship/) — Patterns for building AI agent systems that survive contact with real users: orchestration, tool use, failure handling and the evaluation loops most demos skip. (2026-06-02, AI, Agents, RAG; ~5 min read)
+- [RAG in Production: What the Demos Don't Tell You](https://gulzaib.vercel.app/blog/rag-in-production/) — Chunking, reranking, evaluation and hallucination guards — the unglamorous engineering decisions that decide whether a RAG pipeline helps users or quietly misleads them. (2026-03-15, AI, RAG, Laravel; ~5 min read)
+- [Building a 3D Portfolio With Sound: GSAP, Three.js and Web Audio](https://gulzaib.vercel.app/blog/building-3d-portfolio/) — A field report from building an interactive, motion-animated portfolio: what the stack does well, what breaks on mobile, and the audio-gesture lesson that cost the most debugging time. (2026-01-20, Web, Three.js, GSAP, Audio; ~5 min read)
+- [From Freelancer to Founder: The Stack and the Mindset](https://gulzaib.vercel.app/blog/freelancer-to-founder/) — Five years of building software for other people taught me what prepared me for building a company — and what I had to unlearn to stop selling hours and start shipping products. (2025-10-12, Startups, Career, SaaS; ~4 min read)
+- [Shader Thinking: GLSL Without Losing the Weekend](https://gulzaib.vercel.app/blog/shader-thinking/) — A practical approach to writing GLSL shaders for the web — starting from the math you actually need, debugging techniques, and the performance habits that keep shaders fast on real devices. (2026-09-18, Web, GLSL, Three.js; ~5 min read)
 
 ## Key facts
 
@@ -19,6 +27,7 @@ An interactive, motion-animated portfolio built with React, Three.js, GSAP and L
 ## Links
 
 - Website: https://gulzaib.vercel.app
+- Blog: https://gulzaib.vercel.app/blog/
 - GitHub: https://github.com/imgul
 - LinkedIn: https://www.linkedin.com/in/gulzaib-ai
 - Full details: [llms-full.txt](./llms-full.txt)

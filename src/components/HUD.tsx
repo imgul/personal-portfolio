@@ -79,6 +79,14 @@ export default function HUD({ visible }: { visible: boolean }) {
           MG<span className="text-lime">.</span>
         </button>
         <div className="flex items-center gap-3">
+          <a
+            href="/blog/"
+            data-magnetic
+            data-cursor="Blog"
+            className="pointer-events-auto rounded-full border border-white/25 px-5 py-2.5 font-mono text-[10px] font-bold uppercase tracking-widest text-white/70 transition-colors duration-300 hover:border-lime/70 hover:text-lime"
+          >
+            Blog
+          </a>
           <button
             onClick={() => scrollToSection(8)}
             data-magnetic

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build",
+    "build": "vite build && node scripts/blog/build.mjs",
     "preview": "vite preview --host"
   },
   "dependencies": {
@@ -22,6 +22,9 @@
     "@types/react-dom": "19.2.3",
     "@types/three": "^0.187.0",
     "@vitejs/plugin-react": "5.1.1",
+    "gray-matter": "^4.0.3",
+    "highlight.js": "^11.12.0",
+    "marked": "^18.2.1",
     "tailwindcss": "4.1.17",
     "typescript": "5.9.3",
     "vite": "7.3.7",

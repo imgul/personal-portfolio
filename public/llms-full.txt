@@ -60,3 +60,309 @@ AI & Machine Learning; Open Source; Digital Transformation; Tech Community (hack
 - GitHub: https://github.com/imgul
 - LinkedIn: https://www.linkedin.com/in/gulzaib-ai
 - Location: Islamabad, Pakistan — open to remote · UAE · KSA
+
+
+## Blog (full posts)
+
+## Designing Agentic Systems That Actually Ship
+
+Every agent demo looks flawless in a slide deck. The same system in production meets messy data, slow networks, ambiguous instructions and users who type things no one predicted. The difference between a demo and a product is almost never the model — it is the scaffolding around it.
+
+Here is the set of patterns I keep returning to when building agentic systems that need to ship.
+
+## Start with the orchestrator, not the model
+
+The most common mistake is letting the model direct itself with no structural constraints. Give the system an explicit orchestrator layer that owns three decisions:
+
+- **What runs next** — a deterministic state machine or task graph, not free-form generation
+- **What tools are available** — a narrow, auditable tool registry per task
+- **When to stop** — clear completion criteria, including the right to answer "I don't know"
+
+```python
+# A minimal orchestrator loop: deterministic state, model fills the gaps
+state = "collect_requirement"
+for step in range(MAX_STEPS):
+    action = planner(state, context, tools)
+    if action.type == "complete":
+        break
+    result = run_tool(action.tool, action.args, context)
+    context.append(Observation(action, result))
+    state = next_state(state, action)
+```
+
+The model should decide *within* the frame. It should not decide *the frame*.
+
+## Make tool calls boring and observable
+
+Tools are where agents get into trouble. Every tool call should be logged with its arguments, result and duration. When a production agent misbehaves, you replay the trace — not guess at it.
+
+Design tools to fail safely:
+
+1. **Validate arguments** before executing anything destructive.
+2. **Enforce timeouts** — a hung tool call should never block the whole agent.
+3. **Return structured errors** the model can act on, not raw exceptions.
+4. **Rate-limit and budget** expensive tools per session and per user.
+
+## Design for partial failure
+
+Agents will hit bad data, rate limits and outages. A shipping-grade system degrades gracefully:
+
+- Retry with backoff for transient failures, and mark the retry count.
+- Fall back to a simpler path — a retrieval answer without regeneration, or a cached response.
+- Escalate to a human when confidence drops below a threshold, and hand over the full context.
+
+The human-in-the-loop loop is not a fallback for laziness. For high-stakes actions — sending emails, moving money, mutating records — it is the correct default. Capture the human's decision as a label and feed it back into the system's memory of what works.
+
+## Evaluation is the real product work
+
+Before an agent reaches users, build three evaluations:
+
+- **Golden set** — representative tasks with known-good outcomes
+- **Adversarial set** — the requests that break naive implementations
+- **Regression set** — every bug reported in production, forever
+
+```bash
+# The regression set is the most valuable one
+python evals/run.py --suite regression --baseline latest
+```
+
+Every model upgrade, prompt change and tool change runs the suite before it ships. The prompt that scores well on the golden set but fails the regression set is the prompt that generates your worst support ticket.
+
+## Measure what users actually experience
+
+Instrument the journey, not just the model. Track:
+
+- Steps taken per task (rising steps mean the agent is wandering)
+- Tool failure rate and retry counts
+- User edits to agent output (the strongest signal the output was wrong)
+- Escalations and their resolution times
+
+These metrics will tell you the truth about your agent faster than any benchmark. A model score says the system *can* work; user-edit rate says whether it *does*.
+
+## Keep the loop tight
+
+The teams that ship good agents are the ones that treat evaluation, telemetry and user feedback as first-class parts of the product — not a post-launch cleanup. Build the loop first, then the agent. The agent gets easier; the loop never does.
+
+---
+
+## Building a 3D Portfolio With Sound: GSAP, Three.js and Web Audio
+
+I recently shipped an interactive portfolio built around a 3D scene, scroll-driven animation and a synthesized ambient soundtrack. It is the kind of project where the stack is well understood but the integration is not — and almost every hard lesson came from the seams between the pieces.
+
+## The stack, and why it works
+
+**Three.js** renders a WebGL scene that reacts to scroll and pointer movement. **GSAP** drives the scroll-linked timeline and UI motion. **Lenis** provides smooth scrolling that both GSAP and Three.js subscribe to, so the 3D camera, the section reveals and the scroll bar all move in lockstep.
+
+```tsx
+// Syncing three.js camera with Lenis via GSAP's ticker
+gsap.ticker.add((time) => {
+  lenis.raf(time * 1000);
+  camera.position.y = -scrollProgress * CAMERA_RANGE;
+  renderer.render(scene, camera);
+});
+```
+
+The pattern that made this manageable was a **single source of truth for scroll**: Lenis owns the value, everything else reads it. When the camera, the DOM animations and the audio intensity all derive from one scroll number, they can never drift apart.
+
+## What breaks on mobile
+
+Desktop-only assumptions fail fast on phones. Three things needed real rework:
+
+1. **Pixel ratio** — cap `renderer.setPixelRatio()` at around 2. Uncapped high-DPI rendering drains batteries and drops frames on mid-range Android devices.
+2. **Antialiasing** — disable it on mobile; the perf cost is not worth the edge smoothness at small sizes.
+3. **Interaction models** — a hover-driven UI has no hover on touch. Every `hover` behavior needs a `pointerdown` equivalent, and haptic feedback is the mobile way to confirm a press.
+
+## The audio-gesture lesson
+
+The lesson that cost the most time: **browsers will not start audio without a user gesture** — and Safari on iOS is the strictest about it. An `AudioContext` created on page load starts suspended, and if your entry flow skips the interactive screen because of a deep-link or a refresh, the context never unlocks. Users hear nothing, and nothing in the console explains why.
+
+The fix is architectural, not cosmetic:
+
+- Always unlock audio **inside** a real user gesture — a tap on the entry screen is the reliable trigger.
+- Add a safety net: unlock on the first `pointerdown`, `keydown` or `touchstart` anywhere on the page, whatever path the visitor took.
+- Never gate `AudioContext.resume()` on a preference flag. If the context is suspended, resume it; the gain nodes already control what the user actually hears.
+
+```ts
+// Unlock on the first gesture, no matter how the user arrived
+window.addEventListener("pointerdown", unlockAudio, { passive: true, once: true });
+window.addEventListener("touchstart", unlockAudio, { passive: true, once: true });
+```
+
+## Build the whole thing as one performance budget
+
+Animation, 3D and audio compete for the same frame budget. I treat it as an explicit budget: the audio engine runs a low-cost synthesis loop (no audio files to download), the 3D scene uses simple shaders, and motion is throttled or disabled entirely when the user has `prefers-reduced-motion` set. Accessibility is also performance: a reduced-motion user should get a fast, calm page, not a stuttering one.
+
+## The takeaway
+
+The stack itself was the easy part. The hard parts were the integration points: one scroll source, mobile interaction models, and respecting browser audio policies. Treat those seams as first-class engineering problems and the flashy parts take care of themselves.
+
+---
+
+## From Freelancer to Founder: The Stack and the Mindset
+
+I spent years as a freelance full-stack developer: database design, Laravel backends, React frontends, WordPress plugins, whatever the client needed. Then I stopped selling hours and started building products. That transition was less a leap of faith than a slow renovation of how I think about software.
+
+Here is what the freelance years taught me, and what I had to unlearn.
+
+## What freelancing taught me
+
+**Ship to the requirement, not the ideal.** A client does not pay for architecture that solves problems they do not have. Delivering a narrow, correct, on-time solution is a skill — and the discipline of doing it repeatedly is the foundation of a product mindset.
+
+**OOP and design patterns are a survival skill.** Client projects have long lives and rot fast. Code with clear seams survives three refactors; code without them does not survive the second client request.
+
+**Mentoring is leverage.** At one agency role I helped onboard juniors and the team's productivity rose about 30%. That is not a soft skill — it is the highest-leverage thing a senior engineer can do, and it scales the same way a product does.
+
+**Distribution is real work.** In freelancing, your pipeline is your business. The sales calls, demos and pilots are not a distraction from the engineering — they are the other half of the job.
+
+## What I had to unlearn
+
+**Hours are not leverage.** Freelancing pays per hour; products pay per unit. The instinct to price effort is the first thing to break. A product does not care how long something took — it cares whether it helps enough people.
+
+**Good code is not the product.** I have watched perfectly engineered projects fail because no one told anyone they existed. The product is the whole loop: who it is for, how they find it, what they pay, and what happens when it breaks.
+
+**Validation beats vision.** My earliest product instincts were wrong in ways I could have discovered with ten conversations. The habit I adopted: validate the requirement with real users before writing more code than a throwaway prototype needs. Months of engineering cannot outrun a requirement you never confirmed.
+
+## The stack that carried over
+
+Almost all of it did. Laravel, React, MySQL, Docker, clean API boundaries — the tools of the trade are the same whether you are building a client dashboard or a SaaS product. What changed is the *organization* of the work:
+
+```php
+// Freelance project: optimize for the client's next milestone
+// Product: optimize for the loop — metric, eval, ship, learn
+class ReleasePlanner {
+    public function next(): Release {
+        return $this->queue->highestImpact()->thatPasses($this->evals);
+    }
+}
+```
+
+The product version is not harder engineering. It is engineering in service of a feedback loop instead of a deadline.
+
+## What I would tell the freelancer version of me
+
+Start the feedback loop earlier. Build the smallest thing that validates the demand, treat the pipeline like a product, and keep the engineering discipline — it is the part that makes everything else credible. The hours you bank on code will compound into the products you build on your own terms.
+
+---
+
+## RAG in Production: What the Demos Don't Tell You
+
+A retrieval-augmented generation pipeline is easy to prototype and hard to trust. The demo answer sounds confident and relevant. The production answer, two months later, confidently cites the wrong paragraph, misses the page it should have found, and gradually stops mentioning the documents that were added last week.
+
+Most RAG failures are not model failures. They are pipeline decisions that looked fine in testing.
+
+## Retrieval quality decides everything downstream
+
+If retrieval misses, generation cannot recover — no amount of prompt engineering fixes a document the model never saw. Two investments pay off disproportionately:
+
+**1. Chunk with structure, not character counts.** A naive 500-character splitter cuts sentences in half and separates headings from their content. Respect document structure first:
+
+```php
+// Laravel service: split on headings, then keep paragraphs intact
+$chunks = collect($sections)->flatMap(function ($section) {
+    $paragraphs = preg_split('/\n{2,}/', $section['body']);
+    return array_map(fn ($p) => [
+        'text' => $section['heading'] . "\n\n" . $p,
+        'source' => $section['source'],
+    ], $paragraphs);
+});
+```
+
+**2. Rerank the retrieved set.** Fetch more candidates than you need (say 20), then rerank with a cross-encoder or a small dedicated model. The top-5 after reranking is dramatically more precise than the top-5 from raw vector search.
+
+## Citations are a product feature, not decoration
+
+Every claim the system makes should trace to a source the user can verify. Require the model to emit structured citations and render them as clickable links to the exact chunk:
+
+```json
+{
+  "answer": "Oxygen LMS handles attendance and reporting today.",
+  "citations": [{"chunk_id": "doc:oxygen#attendance", "quote": "attendance, reporting and user management"}]
+}
+```
+
+This does three things at once: it builds user trust, it makes wrong answers debuggable, and it gives you labeled data — every time a user clicks a citation, you learn whether retrieval was right.
+
+## Build the evaluation set before you need it
+
+The single most underrated step. Gather 30–50 real questions with known-correct answers — questions your support team actually receives. Then measure three things for every run:
+
+- **Retrieval recall** — did the correct document appear in the top-k?
+- **Answer correctness** — does the answer match the known-good one?
+- **Hallucination rate** — did the model assert anything not grounded in the retrieved context?
+
+Run this suite on every change to chunking, embeddings, the prompt or the model. A chunking strategy that scores 92% recall in the suite is not guaranteed in production — but a strategy that scores 60% will absolutely fail in production.
+
+## Guard the edges
+
+The dangerous cases are not the ordinary questions. They are:
+
+- **Questions outside your corpus** — the model should say so, not improvise. Detect topic drift and return a candid "I don't have that" with a route to a human.
+- **Conflicting documents** — when sources disagree, surface both rather than averaging them into a confident lie.
+- **Stale data** — when documents change, refresh embeddings and keep timestamps visible in citations. A correct answer from an outdated document is still wrong.
+
+## Keep the pipeline observable
+
+Log every request with the query, the retrieved chunk IDs, the rerank scores, the final answer and the citations. When a user reports a bad answer, you want to replay that exact request — query, context and prompt — not reconstruct it from memory.
+
+The teams that win with RAG treat it like any other production system: staged rollouts, telemetry, evals, and a pipeline that can be rebuilt end to end. The magic is not in the retrieval. It is in the discipline around it.
+
+---
+
+## Shader Thinking: GLSL Without Losing the Weekend
+
+Shaders have a reputation for being the part of graphics programming that swallows weekends. The reputation is earned — but most of the pain comes from jumping into advanced techniques before the fundamentals are in place. Treat shaders as a small, precise language and the weekend survives.
+
+## Start with the three ideas that matter
+
+Almost every shader you will write on the web reduces to three concepts:
+
+1. **Everything is a function of position.** A shader runs once per pixel (fragment) or per vertex, and its job is to decide what that element looks like based on its coordinates.
+2. **Colors are just numbers.** Output is a vec3 of red, green and blue in the 0–1 range. Everything else is arithmetic on vectors.
+3. **Light is arithmetic.** Diffuse, specular, ambient — each is a formula combining a light direction, a surface normal and a view direction.
+
+```glsl
+// A minimal fragment shader: distance-based glow on a dark field
+uniform vec2 u_resolution;
+uniform float u_time;
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  vec2 center = vec2(0.5, 0.5 + 0.1 * sin(u_time));
+  float d = distance(uv, center);
+  vec3 col = vec3(0.03, 0.03, 0.05);
+  col += vec3(0.78, 1.0, 0.24) * smoothstep(0.3, 0.0, d);
+  gl_FragColor = vec4(col, 1.0);
+}
+```
+
+That is the whole skeleton of a glow effect — position, arithmetic, output. Everything more complex is a variation on this shape.
+
+## Debug by isolating inputs
+
+Shader debugging is hard because you cannot step through it. Instead, isolate one variable at a time and visualize each channel separately:
+
+- Render the **red channel alone** to see a value's map across the surface.
+- Toggle **uniforms to constants** to remove time or input dependency.
+- Output **the raw value of one variable** as grayscale — if the normal looks wrong, you will see it immediately.
+
+The fastest debugging trick in my toolkit is a tiny UI slider that sweeps a uniform. If the effect changes predictably as you drag, the math is right and the problem is elsewhere.
+
+## The performance habits that matter
+
+Real devices — phones, low-end laptops — punish shader habits that desktop demos never notice:
+
+- **Avoid branches in fragment shaders.** They serialize the GPU pipeline. Write formulas that blend instead of `if/else` wherever you can.
+- **Keep the math cheap.** `pow`, `atan` and long transcendental chains cost real milliseconds on integrated GPUs. `smoothstep` and `mix` are your friends.
+- **Cap pixel ratios.** Rendering at device pixel ratio 3 on a phone renders four to nine times the fragments. Cap at 2, or render the 3D scene at a lower resolution and upscale.
+- **Frustum-cheat.** If a shader runs on a 2D background that is always fully on screen, it is pure cost with no visual benefit — use it sparingly.
+
+## Think in terms of the frame budget
+
+A shader is not "free" because it is GPU work. On a 60fps target you have about 16ms per frame for everything — physics, animation, audio, draw calls and every shader. Before optimizing, measure: render a frame, look at the profiler, and find what is actually eating the budget. Optimizing the shader that costs 1ms while the draw calls cost 10 is a losing battle.
+
+## The takeaway
+
+Shader thinking is just function thinking: input coordinates in, color numbers out, arithmetic in between. Start with the three fundamentals, debug by isolating channels, and budget your frames like any other engineering resource. The weekend is safe — as long as you respect the math and the profiler.
+
+---
+
