@@ -60,9 +60,14 @@ class Engine {
     if (this.ctx && this.ctx.state === "running") void this.ctx.suspend();
   }
 
-  /** Resume only if music is enabled and the context was suspended. */
+  /**
+   * Resume a suspended context. The gain nodes already gate what is audible,
+   * so resuming is safe even when music is off — and required so that turning
+   * music on later actually starts playback (iOS suspends the context whenever
+   * the page is hidden, so a "music on" toggle must be able to revive it).
+   */
   resume() {
-    if (this.ctx && this.ctx.state === "suspended" && getPrefs().music) void this.ctx.resume();
+    if (this.ctx && this.ctx.state === "suspended") void this.ctx.resume().catch(() => {});
   }
 
   private init() {
@@ -150,10 +155,15 @@ class Engine {
     const t = this.ctx.currentTime;
     this.sfxBus.gain.setTargetAtTime(p.fx ? 1 : 0, t, 0.05);
     this.musicBus.gain.setTargetAtTime(p.music ? 0.9 : 0, t, 0.6);
-    if (p.music && this.timer === null && this.ready) {
-      this.nextT = this.ctx.currentTime + 0.1;
-      this.timer = window.setInterval(() => this.pump(), 90);
-    } else if (!p.music && this.timer !== null) {
+    if (p.music) {
+      // iOS/mobile leave the context suspended when the page was hidden —
+      // revive it so enabling music actually starts playback.
+      if (!this.ready) void this.ctx.resume().catch(() => {});
+      if (this.timer === null && this.ready) {
+        this.nextT = this.ctx.currentTime + 0.1;
+        this.timer = window.setInterval(() => this.pump(), 90);
+      }
+    } else if (this.timer !== null) {
       const id = this.timer;
       this.timer = null;
       window.setTimeout(() => clearInterval(id), 1800);
