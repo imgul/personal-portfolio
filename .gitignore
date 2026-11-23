@@ -4,3 +4,6 @@ dist
 *.local
 .DS_Store
 *.zip
+
+# TypeScript incremental build cache
+tsconfig.tsbuildinfo
