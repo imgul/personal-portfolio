@@ -67,11 +67,22 @@ html {
   overscroll-behavior: none;
   /* allow panning/zoom, disable double-tap zoom delay */
   touch-action: manipulation;
+  /*
+   * Hard guard against horizontal overflow: mobile browsers (iOS Safari
+   * especially) scroll on the html element, so body-only overflow-x:hidden
+   * does not stop horizontal scrolling. clip avoids creating a scroll
+   * container (which can break sticky positioning).
+   */
+  overflow-x: hidden;
+  overflow-x: clip;
+  max-width: 100%;
 }
 body {
   font-family: var(--font-sans);
   background: transparent;
   overflow-x: hidden;
+  overflow-x: clip;
+  max-width: 100%;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   touch-action: manipulation;

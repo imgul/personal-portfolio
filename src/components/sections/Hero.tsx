@@ -38,7 +38,7 @@ function Marquee() {
   }, []);
   const items = [...marquee, ...marquee];
   return (
-    <div className="relative border-y border-white/10 bg-black/30 py-5 backdrop-blur-sm" aria-hidden="true">
+      <div className="relative overflow-hidden border-y border-white/10 bg-black/30 py-5 backdrop-blur-sm" aria-hidden="true">
       <div ref={track} className="flex w-max whitespace-nowrap will-change-transform">
         {[0, 1].map((k) => (
           <div key={k} className="flex shrink-0 items-center">
