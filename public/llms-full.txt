@@ -1,0 +1,62 @@
+# Muhammad Gulzaib — Complete Portfolio Content
+
+Muhammad Gulzaib is a Senior Full Stack Engineer, AI systems builder and SaaS founder based in Islamabad, Pakistan. He has 5+ years of experience building scalable SaaS platforms and AI-powered web applications, and is the Founder & CEO of SynergyFlow Labs, an AI-focused technology company building agentic AI SaaS, rapid MVP development, ERP systems and custom business software. He is currently seeking remote or relocation opportunities in UAE / KSA.
+
+## About
+
+Senior Full Stack Engineer with 5+ years of experience building scalable SaaS platforms and AI-powered web applications. Expert in Laravel, React and backend architecture, with hands-on experience in AI integrations — RAG, APIs and automation systems. Proven track record of delivering high-performance systems, mentoring developers, and contributing to product and system design.
+
+## Ventures & products
+
+1. **SynergyFlow Labs** — Founder & CEO (Founded Jan 2025). AI-focused technology company: Agentic AI SaaS, rapid MVP development, ERP systems, custom business software and AI integrations — products over billable hours. Tags: Agentic AI, SaaS, MVPs, ERP.
+2. **Oxygen LMS** — Founder · Architect (Building). A SaaS platform for schools built on Laravel — attendance, reporting and user management today, growing toward a complete education OS: fees, HR, parent apps and AI teaching assistants. https://oxygenlms.com — Tags: Laravel, EdTech, SaaS.
+3. **AnySub** — Founder (Building in public). "Any subscription. One system." An operating system for subscriptions — track SaaS tools and trials, manage budgets, keep audit trails and let teams comment on spend. https://anysub.app — Tags: Subscriptions, FinOps, Product.
+4. **ZeroExam AI** — Founder (R&D). A tool that lets teachers generate structured exam papers from subjects and topics — heading toward AI checking of written answers for competitive exams. Tags: AI, EdTech, LLMs.
+5. **Sehat Bunyad** — CTO (Health-tech startup). Leading technology at a healthcare startup shortlisted for the NIC Lahore Cohort 3 incubation programme. Tags: HealthTech, Leadership, Product.
+6. **AI Systems** — Engineer (Shipped). AI-integrated APIs built with Python Flask and Laravel, plus RAG-based systems powering intelligent workflows inside client applications. Tags: Flask, RAG, APIs.
+
+## Field notes (lessons)
+
+1. Validate before you build — a POS SaaS taught that customers needed offline + online; months of code can't outrun a requirement you never asked about.
+2. Distribution beats features — great engineering doesn't sell itself; sales channels, demos and pilots come before the roadmap.
+3. Real users, not feature lists — school staff want simple, mobile-first tools they'll actually open every day.
+4. Small & profitable wins — a narrow product with paying customers beats a giant vision with none.
+
+## Agentic AI
+
+Building toward an AI-native company. One orchestrator agent coordinating specialised agents across research, planning, code, operations, marketing, sales and support — with humans in the loop. Capabilities: Tool use, Memory, RAG, Autonomous workflows, Human-in-the-loop.
+
+## Experience
+
+- **Jan 2025 — Present · Islamabad — Founder & CEO, SynergyFlow Labs.** Building agentic AI SaaS products, MVPs and ERP systems; delivering custom business software and AI integrations for clients.
+- **Sep 2024 — Jul 2025 · Lahore — Senior Software Engineer, Exertlogics.** Led development of scalable e-commerce platforms in PHP and React.js; mentored juniors, lifting team productivity by 30%; built Laravel and Python Flask APIs connecting third-party AI services; helped hire and onboard engineers and shaped secure MVC/OOP architecture. https://exertlogics.com
+- **Jun 2024 — Sep 2024 · Islamabad — PHP Laravel Developer, DW Solution Online Ltd.** Full-stack Laravel work alongside Python Flask services; developed AI-integrated APIs and web apps with strong security fundamentals. https://dwsolutionline.com/
+- **Apr 2023 — May 2024 · Lahore — PHP Developer, Bitz Studio.** Scaled SaaS and enterprise apps in Core PHP, CodeIgniter, Laravel, Symfony and React; introduced AI-based management systems built with Laravel; published WordPress plugins. https://bitzstudio.com
+- **Jan 2022 — May 2023 · Remote — Full Stack Laravel Developer, Freelance.** Delivered dynamic web solutions: database design, API implementation and performance optimisation.
+- **Feb 2022 — Jul 2022 · Lahore — Full Stack Developer, RZ Lab.** PHP, Laravel, JavaScript, React, MySQL and WordPress — custom and CMS-based e-commerce.
+
+## Stack
+
+**Backend:** PHP, Laravel, CodeIgniter, Symfony, Python Flask, OOP, Design Patterns, PHPUnit.
+**Frontend:** JavaScript, HTML5, CSS3, TailwindCSS, Bootstrap 5, SASS/LESS, jQuery, ReactJS, VueJS.
+**Data & Infra:** MySQL, Git & GitHub, CLI & Linux, Apache/NginX, Shopify, MongoDB, Docker, Cloud Deployment, CI/CD.
+**AI Systems:** RAG, Agentic AI, Multi-agent systems, OpenAI APIs, Hugging Face, AI automation, TensorFlow, PyTorch.
+
+## Education & certifications
+
+**BS Software Engineering** — Virtual University of Pakistan, 2019—2023, Grade A. Management Head of the Technological Advancement Society (TAS by VU); Technical Editor of VU Bytes; Student Ambassador for Google Student Developer Club and Campus Expert for GitHub Education; studied architecture, SOLID, microservices, DevOps, SaaS, data science and AI.
+
+**Certifications:** Complete Data Science, ML, Deep Learning & NLP Bootcamp (KRISHAI Technologies, Nov 2024); Beginning Laravel — From Novice to Professional (TutsPrime, May 2023); Web Development Masterclass (YouAccel Training, Feb 2023); Modern PHP Web Development w/ MySQL, GitHub & Heroku (Learn IT University, Feb 2023); Complete React Developer Masterclass (Data Is Good Academy, Jan 2023); Certified Web Professional — E-Commerce Specialist (IBM, Oct 2022); Install NGINX, PHP, MySQL, SSL & WordPress on Ubuntu (YouAccel Training, Sep 2022); JavaScript, Bootstrap & PHP — Certification for Beginners (YouAccel Training, Apr 2022).
+
+## Beyond the keyboard
+
+AI & Machine Learning; Open Source; Digital Transformation; Tech Community (hackathons, bootcamps, summits); Minimalist Travel (mountains, hiking, road trips); Social Impact (ethical AI). Languages: English (Proficient), Urdu (Native).
+
+## Contact
+
+- Email: iigulzaib@gmail.com
+- Phone: +92 302 6999 008
+- Website: https://gulzaib.vercel.app
+- GitHub: https://github.com/imgul
+- LinkedIn: https://www.linkedin.com/in/gulzaib-ai
+- Location: Islamabad, Pakistan — open to remote · UAE · KSA

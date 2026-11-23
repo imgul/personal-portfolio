@@ -66,14 +66,10 @@ function TagSphere({ words }: { words: string[] }) {
     el.addEventListener("pointerenter", enter);
     el.addEventListener("pointerleave", leave);
 
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let lastNear = -1;
-    const tick = () => {
-      if (!drag) {
-        vx *= 0.96;
-        vy += (0.004 - vy) * 0.02;
-      }
-      rx += vx;
-      ry += vy;
+    // place the words once so reduced-motion users see a static, laid-out sphere
+    const render = () => {
       const cx = Math.cos(rx);
       const sx = Math.sin(rx);
       const cy = Math.cos(ry);
@@ -99,14 +95,27 @@ function TagSphere({ words }: { words: string[] }) {
           near = i;
         }
       });
-      if (near !== lastNear && nearZ > 0.92) {
+      if (near !== lastNear && nearZ > 0.92 && !reduce) {
         lastNear = near;
         audio.tick(near);
       }
     };
-    gsap.ticker.add(tick);
+    render();
+    let tick: (() => void) | null = null;
+    if (!reduce) {
+      tick = () => {
+        if (!drag) {
+          vx *= 0.96;
+          vy += (0.004 - vy) * 0.02;
+        }
+        rx += vx;
+        ry += vy;
+        render();
+      };
+      gsap.ticker.add(tick);
+    }
     return () => {
-      gsap.ticker.remove(tick);
+      if (tick) gsap.ticker.remove(tick);
       ro.disconnect();
       el.removeEventListener("pointerdown", down);
       el.removeEventListener("pointermove", move);
@@ -144,6 +153,7 @@ export default function Skills() {
 
   useEffect(() => {
     if (!panel.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     gsap.fromTo(
       panel.current.querySelectorAll("[data-skill]"),
       { x: -24, opacity: 0 },
@@ -162,7 +172,7 @@ export default function Skills() {
       <div className="mt-14 grid items-center gap-12 lg:grid-cols-2">
         <div data-reveal>
           <TagSphere words={words} />
-          <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.25em] text-white/35">Drag · hover · {words.length} technologies</p>
+          <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.25em] text-white/55">Drag · hover · {words.length} technologies</p>
         </div>
 
         <div data-reveal>

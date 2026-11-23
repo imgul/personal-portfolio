@@ -113,7 +113,7 @@ export default function Scene() {
     const mobile = () => window.innerWidth < 900;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: !mobile(), alpha: true, powerPreference: "high-performance" });
     const dpr = Math.min(window.devicePixelRatio || 1, mobile() ? 1.5 : 1.75);
     renderer.setPixelRatio(dpr);
     renderer.setSize(w, h, false);

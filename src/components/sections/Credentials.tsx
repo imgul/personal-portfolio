@@ -97,12 +97,12 @@ export default function Credentials() {
               <br />
               Always <span className="text-lime">shipping.</span>
             </div>
-            <div className="mt-4 font-mono text-[11px] uppercase tracking-[0.25em] text-white/40">Next up → Beyond the keyboard</div>
+            <div className="mt-4 font-mono text-[11px] uppercase tracking-[0.25em] text-white/55">Next up → Beyond the keyboard</div>
           </article>
         </div>
 
         <div className="mt-10 px-5 sm:px-10 md:px-16 lg:pl-24">
-          <div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-widest text-white/40">
+          <div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-widest text-white/55">
             <span>Keep scrolling →</span>
             <div className="h-px max-w-xs flex-1 bg-white/15">
               <div ref={bar} className="h-full origin-left bg-lime" style={{ transform: "scaleX(0)" }} />
