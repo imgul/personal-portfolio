@@ -42,6 +42,10 @@ export default function Agents() {
   }, []);
 
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      fire(0);
+      return;
+    }
     let i = 0;
     const id = setInterval(() => {
       if (paused.current) return;
@@ -73,14 +77,14 @@ export default function Agents() {
           </div>
 
           <div data-reveal className="glass mt-10 rounded-2xl p-5 font-mono text-[12px] leading-6 text-white/70">
-            <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-widest text-white/35">
+            <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-widest text-white/55">
               <span>orchestrator.log</span>
               <span>illustrative simulation</span>
             </div>
             <div className="min-h-[96px]">
               {logs.map((l, idx) => (
-                <div key={l.n} className={idx === logs.length - 1 ? "text-lime" : "text-white/40"}>
-                  <span className="text-white/30">▸ </span>
+                <div key={l.n} className={idx === logs.length - 1 ? "text-lime" : "text-white/65"}>
+                  <span className="text-white/55">▸ </span>
                   {l.t}
                 </div>
               ))}
@@ -143,7 +147,7 @@ export default function Agents() {
                 onPointerLeave={() => (paused.current = false)}
                 onClick={() => fire(i, true)}
                 onKeyDown={(e) => e.key === "Enter" && fire(i, true)}
-                style={{ cursor: "pointer", outline: "none" }}
+                style={{ cursor: "pointer" }}
               >
                 <circle cx={p.x} cy={p.y} r="42" fill="transparent" />
                 <circle
@@ -177,7 +181,7 @@ export default function Agents() {
               </span>
             ))}
           </div>
-          <p className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.25em] text-white/35">Hover or tap an agent</p>
+          <p className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.25em] text-white/55">Hover or tap an agent</p>
         </div>
       </div>
     </section>

@@ -64,7 +64,7 @@ export default function Experience() {
               <div className="card rounded-3xl border border-white/10 bg-black/30 p-6 backdrop-blur-md transition-all duration-500 sm:p-8">
                 <div data-job-in className="flex flex-wrap items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-widest text-lime">
                   <span>{j.period}</span>
-                  <span className="text-white/40">
+                  <span className="text-white/55">
                     {String(i + 1).padStart(2, "0")} · {j.location}
                   </span>
                 </div>

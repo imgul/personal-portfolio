@@ -46,6 +46,7 @@ export default function About() {
   useEffect(() => {
     const words = text.current?.querySelectorAll<HTMLElement>(".w");
     if (!words) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const tw = gsap.fromTo(
       words,
       { opacity: 0.12 },

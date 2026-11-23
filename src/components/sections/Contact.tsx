@@ -160,7 +160,6 @@ export default function Contact() {
             text="Let's build something that [ships.]"
             className="max-w-5xl font-display font-extrabold leading-[0.95] tracking-tight"
           />
-          <style>{`[data-section="contact"] h2{font-size:clamp(2.6rem,9vw,8rem)}`}</style>
           <p data-reveal className="mt-6 max-w-xl text-base text-white/65 sm:text-lg">
             Hiring for a remote role, relocating to UAE / KSA, or starting something new? I'm in. Startups, AI products and ambitious MVPs are my favourite
             conversations.
@@ -195,7 +194,7 @@ export default function Contact() {
                     <span className="block font-display text-lg font-bold">{l.label}</span>
                     <span className="font-mono text-xs text-white/50">{l.sub}</span>
                   </span>
-                  <Arrow className="h-5 w-5 text-white/40 transition-all group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-lime" />
+                  <Arrow className="h-5 w-5 text-white/60 transition-all group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-lime" />
                 </a>
               ))}
             </div>
@@ -203,11 +202,11 @@ export default function Contact() {
 
           <div data-reveal className="flex flex-col items-center gap-4">
             <HoldButton />
-            <p className="text-center font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">Press &amp; hold — feel it build</p>
+            <p className="text-center font-mono text-[10px] uppercase tracking-[0.25em] text-white/55">Press &amp; hold — feel it build</p>
           </div>
         </div>
 
-        <footer className="flex flex-col gap-3 border-t border-white/10 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] font-mono text-[11px] uppercase tracking-[0.2em] text-white/40 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="flex flex-col gap-3 border-t border-white/10 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] font-mono text-[11px] uppercase tracking-[0.2em] text-white/55 sm:flex-row sm:items-center sm:justify-between">
           <span>© 2026 Muhammad Gulzaib</span>
           <span>
             {profile.location} · <Clock /> PKT

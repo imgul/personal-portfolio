@@ -24,7 +24,7 @@ function Toggle({
       data-nohaptic
       title={label}
       className={`group flex h-10 items-center gap-2 rounded-full border px-3.5 font-mono text-[10px] uppercase tracking-widest backdrop-blur-md transition-colors ${
-        on ? "border-[color:var(--accent)]/60 bg-[color:var(--accent)]/10 text-[color:var(--accent)]" : "border-white/15 bg-black/30 text-white/45"
+        on ? "border-[color:var(--accent)]/60 bg-[color:var(--accent)]/10 text-[color:var(--accent)]" : "border-white/15 bg-black/30 text-white/55"
       }`}
     >
       {children}
@@ -89,7 +89,7 @@ export default function HUD({ visible }: { visible: boolean }) {
           </button>
           <div className="pointer-events-none text-right font-mono text-[11px] uppercase tracking-[0.25em] text-white/60">
             <span style={{ color: accent }}>{String(active + 1).padStart(2, "0")}</span>
-            <span className="text-white/30"> / {String(SECTIONS.length).padStart(2, "0")}</span>
+            <span className="text-white/55"> / {String(SECTIONS.length).padStart(2, "0")}</span>
             <div className="mt-1 text-white/90">{SECTIONS[active].label}</div>
           </div>
         </div>
@@ -99,7 +99,7 @@ export default function HUD({ visible }: { visible: boolean }) {
       <div className="absolute bottom-24 left-5 top-24 hidden w-px bg-white/10 sm:left-8 md:block">
         <div ref={prog} className="h-full origin-top" style={{ background: accent, transform: "scaleY(0)" }} />
       </div>
-      <div className="absolute bottom-[calc(1.25rem+env(safe-area-inset-bottom))] left-5 hidden font-mono text-[10px] uppercase tracking-widest text-white/40 sm:left-8 md:block">
+      <div className="absolute bottom-[calc(1.25rem+env(safe-area-inset-bottom))] left-5 font-mono text-[10px] uppercase tracking-widest text-white/55 sm:left-8">
         <span ref={pct} className="text-white/80">
           00
         </span>

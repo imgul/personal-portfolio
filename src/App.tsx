@@ -1,4 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Component, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -22,15 +23,67 @@ import { SECTIONS, getActive, setActive, store } from "./lib/store";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/** Crawler / automation detection — search bots and AI fetchers skip the entry gate. */
+function isCrawler(): boolean {
+  const ua = navigator.userAgent || "";
+  return (
+    /googlebot|google-web-fetch|bingbot|facebookexternalhit|twitterbot|applebot|perplexitybot|aibot|chatgpt|claude|cohere|duckduckbot|slurp|baiduspider|robot/i.test(
+      ua
+    ) || Boolean((navigator as unknown as { webdriver?: boolean }).webdriver)
+  );
+}
+
+/** Error boundary — a runtime error should never leave a blank page. */
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: unknown) {
+    console.error("Portfolio error:", error);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
+          <p className="font-display text-4xl font-extrabold uppercase">Something glitched.</p>
+          <p className="max-w-md text-white/60">
+            The experience hit an unexpected error. The content below is still available — scroll or jump to the
+            contact section.
+          </p>
+          <a
+            href="mailto:iigulzaib@gmail.com"
+            className="rounded-full bg-lime px-6 py-3 font-display text-sm font-bold uppercase tracking-widest text-ink"
+          >
+            Get in touch
+          </a>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   const [entered, setEntered] = useState(false);
   const lastActive = useRef(0);
+  const mainRef = useRef<HTMLElement>(null);
   useInteractions();
+
+  /* crawler detection + deep-link hash (#about, #contact, …) */
+  const hashIdx = useMemo(() => {
+    const id = window.location.hash.replace(/^#/, "");
+    return SECTIONS.findIndex((s) => s.id === id);
+  }, []);
+  const shouldAutoEnter = useMemo(() => isCrawler() || hashIdx >= 0, [hashIdx]);
 
   /* smooth scroll + per-frame scroll/section tracking */
   useEffect(() => {
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-    window.scrollTo(0, 0);
+    // only reset to top on a fresh navigation — never clobber back/forward or a deep link
+    const nav = performance.getEntriesByType("navigation")[0] as (PerformanceEntry & { type?: string }) | undefined;
+    const freshNav = !nav || nav.type === "navigate";
+    if (freshNav && hashIdx < 0) window.scrollTo(0, 0);
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const lenis = new Lenis({ lerp: reduce ? 1 : 0.09, smoothWheel: !reduce, touchMultiplier: 1.4 });
@@ -39,6 +92,7 @@ export default function App() {
     lenis.on("scroll", () => ScrollTrigger.update());
 
     let lastY = 0;
+    let lastIdx = -1;
     const tick = (time: number) => {
       lenis.raf(time * 1000);
       const y = lenis.scroll;
@@ -63,6 +117,19 @@ export default function App() {
       const idx = Math.min(secs.length - 1, Math.floor(f + 0.0001));
       if (idx !== getActive()) setActive(idx);
 
+      // keep the URL hash in sync with the active section (deep-linkable, shareable)
+      if (idx !== lastIdx && store.entered) {
+        lastIdx = idx;
+        if (idx === 0) {
+          if (window.location.hash) history.replaceState(null, "", window.location.pathname);
+        } else {
+          const id = SECTIONS[idx]?.id;
+          if (id && window.location.hash !== `#${id}`) {
+            history.replaceState(null, "", `#${id}`);
+          }
+        }
+      }
+
       audio.setIntensity(Math.min(1, Math.abs(store.vel) / 60));
     };
     gsap.ticker.add(tick);
@@ -81,7 +148,25 @@ export default function App() {
       lenis.destroy();
       store.lenis = null;
     };
-  }, []);
+  }, [hashIdx]);
+
+  /* auto-enter for crawlers and deep links, then jump to the requested section */
+  useEffect(() => {
+    if (!shouldAutoEnter) return;
+    const id = setTimeout(() => {
+      store.entered = true;
+      setEntered(true);
+      store.lenis?.start();
+      setTimeout(() => ScrollTrigger.refresh(), 200);
+      if (hashIdx > 0) {
+        setTimeout(() => {
+          const el = document.querySelectorAll<HTMLElement>("[data-section]")[hashIdx];
+          if (el && store.lenis) store.lenis.scrollTo(el, { duration: 1.2 });
+        }, 400);
+      }
+    }, hashIdx > 0 ? 300 : 0);
+    return () => clearTimeout(id);
+  }, [shouldAutoEnter, hashIdx]);
 
   /* section change feedback: whoosh + tick + haptic + chime */
   useEffect(() => {
@@ -100,9 +185,10 @@ export default function App() {
     return () => clearInterval(id);
   }, []);
 
-  /* global scroll reveals */
+  /* global scroll reveals — respects prefers-reduced-motion */
   useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
       gsap.utils.toArray<HTMLElement>("[data-split]").forEach((el) => {
         gsap.from(el.querySelectorAll(".sw"), {
           yPercent: 118,
@@ -140,7 +226,7 @@ export default function App() {
     return () => {
       clearTimeout(t);
       window.removeEventListener("load", refresh);
-      ctx.revert();
+      mm.revert();
     };
   }, []);
 
@@ -149,17 +235,40 @@ export default function App() {
     setEntered(true);
     store.lenis?.start();
     setTimeout(() => ScrollTrigger.refresh(), 200);
+    // move focus into the document for keyboard / AT users
+    requestAnimationFrame(() => mainRef.current?.focus());
+  };
+
+  const skipToContent = (e: React.MouseEvent) => {
+    e.preventDefault();
+    mainRef.current?.focus();
+    store.lenis?.scrollTo(0, { duration: 1.2 });
+    history.replaceState(null, "", window.location.pathname);
   };
 
   return (
-    <>
-      <Scene />
+    <ErrorBoundary>
+      <a
+        href="#app-root"
+        onClick={skipToContent}
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-lime focus:px-4 focus:py-2 focus:font-mono focus:text-xs focus:font-bold focus:uppercase focus:tracking-widest focus:text-ink"
+      >
+        Skip to content
+      </a>
+      {/* 3D scene mounts only after entry — defers the heavy WebGL init */}
+      {entered && <Scene />}
       <div className="grain" aria-hidden="true" />
       <Cursor />
       <HUD visible={entered} />
       {!entered && <Gate onEnter={handleEnter} />}
 
-      <main id="app-root" className="relative z-10" data-sections={SECTIONS.length}>
+      <main
+        id="app-root"
+        ref={mainRef}
+        tabIndex={-1}
+        className="relative z-10 outline-none"
+        data-sections={SECTIONS.length}
+      >
         <Hero entered={entered} />
         <About />
         <Ventures />
@@ -170,6 +279,6 @@ export default function App() {
         <Beyond />
         <Contact />
       </main>
-    </>
+    </ErrorBoundary>
   );
 }

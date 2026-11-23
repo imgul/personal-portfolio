@@ -21,7 +21,7 @@ export default function Ventures() {
             <TiltCard key={v.name} accent={v.accent} className={`rounded-3xl ${v.wide ? "lg:col-span-2" : ""}`}>
               <Wrapper {...linkProps} className="relative z-10 flex h-full flex-col p-6 sm:p-8" style={{ transform: "translateZ(30px)" }}>
                 <div className="mb-10 flex items-start justify-between gap-4">
-                  <span className="font-mono text-xs text-white/40">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="font-mono text-xs text-white/55">{String(i + 1).padStart(2, "0")}</span>
                   <span
                     className="rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-widest"
                     style={{ borderColor: `${v.accent}66`, color: v.accent, background: `${v.accent}14` }}

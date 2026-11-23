@@ -20,6 +20,7 @@ function Word({ text, offset, base, className = "" }: { text: string; offset: nu
 function Marquee() {
   const track = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const el = track.current!;
     let x = 0;
     let dir = 1;
@@ -66,6 +67,7 @@ export default function Hero({ entered }: { entered: boolean }) {
 
   // proximity hover on letters
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const chars = Array.from(root.current!.querySelectorAll<HTMLElement>("[data-char]"));
     const cur = chars.map(() => ({ y: 0, s: 1, k: 0 }));
     const tick = () => {
@@ -91,12 +93,18 @@ export default function Hero({ entered }: { entered: boolean }) {
 
   // entrance
   useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const fromChars = { yPercent: 120, opacity: 0, rotateX: -80 };
     const fromIn = { y: 30, opacity: 0 };
     const ctx = gsap.context(() => {
       if (!entered) {
         gsap.set("[data-char-in]", fromChars);
         gsap.set("[data-hero-in]", fromIn);
+        return;
+      }
+      if (reduce) {
+        gsap.set("[data-char-in]", { yPercent: 0, opacity: 1, rotateX: 0 });
+        gsap.set("[data-hero-in]", { y: 0, opacity: 1 });
         return;
       }
       const tl = gsap.timeline({ delay: 0.35 });
@@ -139,7 +147,7 @@ export default function Hero({ entered }: { entered: boolean }) {
           <div>
             <p data-hero-in className="max-w-xl font-display text-xl font-bold leading-tight sm:text-3xl">
               Senior Full Stack Engineer
-              <span className="text-white/40"> who builds</span>
+              <span className="text-white/55"> who builds</span>
               <span className="mt-1 block h-[1.2em] overflow-hidden text-lime" style={{ perspective: 600 }}>
                 <span key={wi} className="inline-block animate-wordin">
                   {rotating[wi]}
@@ -162,8 +170,8 @@ export default function Hero({ entered }: { entered: boolean }) {
             </div>
           </div>
         </div>
-        <p data-hero-in className="mt-8 font-mono text-[10px] uppercase tracking-[0.25em] text-white/30 sm:text-[11px]">
-          ↑ Hover the letters — they play notes
+        <p data-hero-in className="mt-8 font-mono text-[10px] uppercase tracking-[0.25em] text-white/55 sm:text-[11px]">
+          ↑ Hover or tap the letters — they play notes
         </p>
       </section>
       <Marquee />

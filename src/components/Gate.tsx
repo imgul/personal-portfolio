@@ -86,13 +86,13 @@ export default function Gate({ onEnter }: { onEnter: () => void }) {
       </div>
 
       <div className="mx-auto w-full max-w-3xl">
-        <h1 data-g-in className="font-display text-4xl font-extrabold leading-[0.95] tracking-tight sm:text-7xl">
+        <div data-g-in className="font-display text-4xl font-extrabold leading-[0.95] tracking-tight sm:text-7xl">
           An experience
           <br />
           you can <span className="text-lime">see, hear</span>
           <br />
           &amp; <span className="stroke-text">feel.</span>
-        </h1>
+        </div>
 
         <div data-g-in className="mt-10 font-mono text-xs leading-6 text-white/55">
           {LOGS.slice(0, lines).map((l) => (
@@ -132,7 +132,7 @@ export default function Gate({ onEnter }: { onEnter: () => void }) {
         </div>
       </div>
 
-      <div data-g-in className="flex flex-wrap items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-white/40">
+      <div data-g-in className="flex flex-wrap items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-white/55">
         <span>Best with headphones{hapticsSupported() ? " & a phone that buzzes" : ""}</span>
         <span>Scroll · Click · Hover · Press “M” for music</span>
       </div>
