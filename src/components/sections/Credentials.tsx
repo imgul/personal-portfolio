@@ -37,7 +37,7 @@ export default function Credentials() {
 
   return (
     <div data-section="credentials">
-      <section ref={pin} className="relative flex h-screen flex-col justify-center overflow-hidden">
+      <section ref={pin} className="relative flex h-screen h-[100svh] flex-col justify-center overflow-hidden">
         <div className="px-5 sm:px-10 md:px-16 lg:pl-24">
           <Eyebrow n="06" label="Education & certifications" />
         </div>

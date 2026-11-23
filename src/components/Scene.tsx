@@ -111,6 +111,7 @@ export default function Scene() {
     let w = window.innerWidth;
     let h = window.innerHeight;
     const mobile = () => window.innerWidth < 900;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
     const dpr = Math.min(window.devicePixelRatio || 1, mobile() ? 1.5 : 1.75);
@@ -137,7 +138,7 @@ export default function Scene() {
     const core = new THREE.Group();
     rig.add(core);
 
-    const detail = mobile() ? 22 : 34;
+    const detail = mobile() ? 18 : 34;
     const meshGeo = new THREE.IcosahedronGeometry(1, detail);
     const mesh = new THREE.Mesh(
       meshGeo,
@@ -145,7 +146,7 @@ export default function Scene() {
     );
     core.add(mesh);
 
-    const shellGeo = new THREE.IcosahedronGeometry(1.32, mobile() ? 14 : 22);
+    const shellGeo = new THREE.IcosahedronGeometry(1.32, mobile() ? 10 : 22);
     const shell = new THREE.Points(
       shellGeo,
       new THREE.ShaderMaterial({
@@ -161,9 +162,10 @@ export default function Scene() {
 
     // rings
     const ringMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.55 });
-    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(2.0, 0.006, 8, 240), ringMat);
+    const SEG = mobile() ? 120 : 240;
+    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(2.0, 0.006, 8, SEG), ringMat);
     ring1.rotation.x = 1.25;
-    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.45, 0.004, 8, 240), ringMat);
+    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.45, 0.004, 8, SEG), ringMat);
     ring2.rotation.set(0.4, 0.6, 0);
     rig.add(ring1, ring2);
 
@@ -171,7 +173,7 @@ export default function Scene() {
     const orbMat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.8 });
     const orbiters: { pivot: THREE.Group; speed: number }[] = [];
     const orbGeos = [new THREE.IcosahedronGeometry(0.1, 0), new THREE.OctahedronGeometry(0.11, 0), new THREE.TetrahedronGeometry(0.12, 0)];
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < (mobile() ? 6 : 12); i++) {
       const pivot = new THREE.Group();
       pivot.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
       const m = new THREE.Mesh(orbGeos[i % 3], orbMat);
@@ -182,7 +184,7 @@ export default function Scene() {
     }
 
     // stars
-    const starCount = mobile() ? 1100 : 2400;
+    const starCount = mobile() ? 600 : 2400;
     const pos = new Float32Array(starCount * 3);
     const col = new Float32Array(starCount * 3);
     const c = new THREE.Color();
@@ -254,7 +256,7 @@ export default function Scene() {
         a.z + (b.z - a.z) * k
       );
       targetS = (a.s + (b.s - a.s) * k) * sMul;
-      const op = (a.o + (b.o - a.o) * k) * (mobile() ? 0.8 : 1);
+      const op = (a.o + (b.o - a.o) * k) * (mobile() ? 0.6 : 1);
       canvas.style.opacity = op.toFixed(3);
 
       const lerpK = 1 - Math.pow(0.0015, dt);
@@ -278,25 +280,27 @@ export default function Scene() {
       uniforms.uTime.value = t;
       store.pulse *= Math.pow(0.04, dt);
       uniforms.uPulse.value = store.pulse;
-      const speed = Math.min(Math.abs(store.vel) * 0.012, 1.2);
-      uniforms.uAmp.value += (0.75 + speed * 0.8 - uniforms.uAmp.value) * 0.08;
+      const rm = reduce ? 0.4 : 1;
+      const speed = Math.min(Math.abs(store.vel) * 0.012, 1.2) * rm;
+      const ampTarget = reduce ? 0.25 : 0.75 + speed * 0.8;
+      uniforms.uAmp.value += (ampTarget - uniforms.uAmp.value) * 0.08;
       uniforms.uMouse.value.set(mouseX, mouseY);
 
-      rotY += dt * (0.12 + speed * 1.2);
-      rotX += dt * 0.05;
+      rotY += dt * (0.12 + speed * 1.2) * rm;
+      rotX += dt * 0.05 * rm;
       core.rotation.y = rotY + mouseX * 0.5;
       core.rotation.x = rotX * 0.3 + -mouseY * 0.35 + f * 0.2;
       shell.rotation.y = -rotY * 0.6;
-      ring1.rotation.z += dt * 0.15;
-      ring2.rotation.z -= dt * 0.1 + speed * 0.1;
+      ring1.rotation.z += dt * 0.15 * rm;
+      ring2.rotation.z -= dt * 0.1 * rm + speed * 0.1;
       ring1.rotation.x = 1.25 + Math.sin(t * 0.3) * 0.15 + mouseY * 0.2;
       ring2.rotation.y = 0.6 + Math.cos(t * 0.25) * 0.2 + mouseX * 0.2;
       orbiters.forEach((o, n) => {
-        o.pivot.rotation.y += dt * o.speed * (1 + speed * 4);
-        o.pivot.rotation.z += dt * 0.05 * (n % 2 ? 1 : -1);
+        o.pivot.rotation.y += dt * o.speed * (1 + speed * 4) * rm;
+        o.pivot.rotation.z += dt * 0.05 * (n % 2 ? 1 : -1) * rm;
       });
 
-      stars.rotation.y += dt * (0.01 + speed * 0.35);
+      stars.rotation.y += dt * (0.01 + speed * 0.35) * rm;
       stars.rotation.x = f * 0.12 + mouseY * 0.05;
       camera.position.x += (mouseX * 0.45 - camera.position.x) * 0.04;
       camera.position.y += (mouseY * 0.3 - camera.position.y) * 0.04;
@@ -306,9 +310,21 @@ export default function Scene() {
     };
     loop();
 
+    // pause rendering when the tab/app is hidden — saves battery on mobile
+    const onVis = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      } else if (!raf) {
+        raf = requestAnimationFrame(loop);
+      }
+    };
+    document.addEventListener("visibilitychange", onVis);
+
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVis);
       meshGeo.dispose();
       shellGeo.dispose();
       starGeo.dispose();

@@ -61,6 +61,12 @@ html {
   background: var(--color-ink);
   color: var(--color-paper);
   -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* prevent pull-to-refresh / scroll chaining interfering with Lenis on mobile */
+  overscroll-behavior: none;
+  /* allow panning/zoom, disable double-tap zoom delay */
+  touch-action: manipulation;
 }
 body {
   font-family: var(--font-sans);
@@ -68,6 +74,28 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  touch-action: manipulation;
+}
+
+/* mobile-friendly touch defaults: remove tap delay, long-press callouts, text selection */
+a,
+button,
+[role="button"] {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* lighter, cheaper blur on small screens for GPU-constrained devices */
+@media (max-width: 640px) {
+  .glass {
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+  .grain {
+    opacity: 0.05;
+  }
 }
 #root {
   position: relative;

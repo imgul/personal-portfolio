@@ -78,7 +78,7 @@ function TagSphere({ words }: { words: string[] }) {
       const sx = Math.sin(rx);
       const cy = Math.cos(ry);
       const sy = Math.sin(ry);
-      const rad = size * 0.36;
+      const rad = size * (size < 640 ? 0.3 : 0.36);
       let near = -1;
       let nearZ = -2;
       points.forEach(([x, y, z], i) => {
@@ -117,7 +117,7 @@ function TagSphere({ words }: { words: string[] }) {
   }, [points]);
 
   return (
-    <div ref={box} data-cursor="Drag" className="relative mx-auto aspect-square w-full max-w-[520px] touch-pan-y select-none">
+    <div ref={box} data-cursor="Drag" className="relative mx-auto aspect-square w-full max-w-[520px] touch-pan-y select-none overflow-hidden">
       <div className="absolute inset-[12%] rounded-full border border-white/10" />
       <div className="absolute inset-[26%] rounded-full border border-dashed border-white/10" />
       {words.map((w, i) => (
@@ -126,7 +126,7 @@ function TagSphere({ words }: { words: string[] }) {
           ref={(n) => {
             if (n) els.current[i] = n;
           }}
-          className="tag-cloud-word text-sm sm:text-lg"
+          className="tag-cloud-word text-[11px] sm:text-lg"
           style={{ color: COLORS[i % COLORS.length] }}
         >
           {w}

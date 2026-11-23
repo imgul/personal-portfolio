@@ -117,7 +117,7 @@ export default function Hero({ entered }: { entered: boolean }) {
 
   return (
     <div data-section="intro">
-      <section ref={root} className="relative flex min-h-[100svh] flex-col justify-end px-5 pb-10 pt-28 sm:px-10 md:px-16 lg:pl-24">
+      <section ref={root} className="relative flex min-h-screen min-h-[100svh] flex-col justify-end px-5 pb-10 pt-28 sm:px-10 md:px-16 lg:pl-24">
         <div data-hero-in className="mb-8 flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-white/70">
           <span className="flex items-center gap-2 rounded-full border border-lime/40 bg-lime/10 px-3 py-1.5 text-lime">
             <span className="relative flex h-2 w-2">

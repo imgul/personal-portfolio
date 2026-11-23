@@ -55,6 +55,16 @@ class Engine {
     this.apply();
   }
 
+  /** Suspend the context when the tab/app is hidden — saves battery on mobile. */
+  suspend() {
+    if (this.ctx && this.ctx.state === "running") void this.ctx.suspend();
+  }
+
+  /** Resume only if music is enabled and the context was suspended. */
+  resume() {
+    if (this.ctx && this.ctx.state === "suspended" && getPrefs().music) void this.ctx.resume();
+  }
+
   private init() {
     const AC: typeof AudioContext =
       window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;

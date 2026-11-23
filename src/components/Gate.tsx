@@ -77,7 +77,7 @@ export default function Gate({ onEnter }: { onEnter: () => void }) {
   return (
     <div
       ref={root}
-      className="fixed inset-0 z-[90] flex flex-col justify-between bg-ink/80 p-6 backdrop-blur-xl sm:p-10"
+      className="fixed inset-0 z-[90] flex flex-col justify-between bg-ink/80 p-6 backdrop-blur-xl sm:p-10 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]"
       style={{ clipPath: "inset(0 0 0% 0)" }}
     >
       <div data-g-in className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.3em] text-white/50">

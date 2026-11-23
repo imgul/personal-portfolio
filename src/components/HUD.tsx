@@ -69,7 +69,7 @@ export default function HUD({ visible }: { visible: boolean }) {
   return (
     <div ref={root} className="pointer-events-none fixed inset-0 z-50 opacity-0">
       {/* top bar */}
-      <div className="absolute left-0 right-0 top-0 flex items-start justify-between p-5 sm:p-8">
+      <div className="absolute left-0 right-0 top-0 flex items-start justify-between p-5 sm:p-8 pt-[max(1.25rem,env(safe-area-inset-top))]">
         <button
           onClick={() => scrollToSection(0)}
           data-magnetic
@@ -99,7 +99,7 @@ export default function HUD({ visible }: { visible: boolean }) {
       <div className="absolute bottom-24 left-5 top-24 hidden w-px bg-white/10 sm:left-8 md:block">
         <div ref={prog} className="h-full origin-top" style={{ background: accent, transform: "scaleY(0)" }} />
       </div>
-      <div className="absolute bottom-5 left-5 hidden font-mono text-[10px] uppercase tracking-widest text-white/40 sm:left-8 md:block">
+      <div className="absolute bottom-[calc(1.25rem+env(safe-area-inset-bottom))] left-5 hidden font-mono text-[10px] uppercase tracking-widest text-white/40 sm:left-8 md:block">
         <span ref={pct} className="text-white/80">
           00
         </span>
@@ -129,7 +129,7 @@ export default function HUD({ visible }: { visible: boolean }) {
       </nav>
 
       {/* toggles */}
-      <div className="pointer-events-auto absolute bottom-4 right-4 flex items-center gap-2 sm:bottom-6 sm:right-8">
+      <div className="pointer-events-auto absolute bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 flex items-center gap-2 sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] sm:right-8">
         <Toggle
           on={prefs.music}
           label="Music"

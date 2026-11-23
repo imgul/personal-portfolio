@@ -67,8 +67,17 @@ export default function App() {
     };
     gsap.ticker.add(tick);
     gsap.ticker.lagSmoothing(0);
+
+    // suspend audio when the tab/app is hidden (mobile battery), resume when visible
+    const onVis = () => {
+      if (document.hidden) audio.suspend();
+      else audio.resume();
+    };
+    document.addEventListener("visibilitychange", onVis);
+
     return () => {
       gsap.ticker.remove(tick);
+      document.removeEventListener("visibilitychange", onVis);
       lenis.destroy();
       store.lenis = null;
     };
